@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { socket } from "../services/socket.js";
 import Sketch from "react-p5";
+import * as p5Com from "p5";
 import p5Types from "p5";
 import backdrop from "../Game-Components/Backdrop";
 import Paddle from "../Game-Components/Paddle.js";
@@ -12,7 +13,7 @@ export const GameScreen: React.FC<GameScreenProps> = ({}) => {
   let y = 50;
   let textOffsetX = 50;
   let textOffsetY = 10;
-
+  let go = false;
   let width = window.innerWidth * 0.8;
   let height = window.innerHeight * 0.9;
 
@@ -37,11 +38,15 @@ export const GameScreen: React.FC<GameScreenProps> = ({}) => {
   //   return false;
   // }
 
+  setTimeout(() => {
+    go = true;
+  }, 3000);
+
   const setup = (p5: p5Types, canvasParentRef: Element) => {
     p5.createCanvas(window.innerWidth * 0.8, window.innerHeight * 0.9).parent(
       canvasParentRef
     );
-    ball = new Ball(width / 2, height / 2, 10, 10, p5);
+    ball = new Ball(width / 2, height / 2, 10, 10, p5, p5Com);
     p1 = new Paddle(20, height / 2 - 50, 10, 100, p5);
     p2 = new Paddle(width - 30, height / 2 - 50, 10, 100, p5);
   };
@@ -49,24 +54,30 @@ export const GameScreen: React.FC<GameScreenProps> = ({}) => {
   const draw = (p5: p5Types) => {
     p5.background(52);
     movePaddles(p5);
-    backdrop(p5);
+    backdrop(p5, p1.score, p2.score);
     p1.show(p5);
     p2.show(p5);
 
-    // let oob = ball.outOfBounds();
-    // if (oob) {
-    //   // the ball stays at spawn till go = true
-    //   go = false;
-    //   if (oob == 'right') {
-    //     p1.score++;
-    //   } else {
-    //     p2.score++
-    //   }
-    // }
+    go = false;
 
-    // if (go) ball.update();
+    let oob = ball.outOfBounds(p5Com);
+    if (oob) {
+      // the ball stays at spawn till go = true
+      go = false;
+      if (oob === "right") {
+        p1.score++;
+      } else {
+        p2.score++;
+      }
 
-    ball.hit(p1, p2, p5, ball);
+      setTimeout(() => {
+        go = true;
+      }, 1500);
+    }
+
+    if (go) ball.update();
+    // ball.update();
+    ball.hit(p1, p2, p5, ball, p5Com);
 
     ball.show(p5);
   };

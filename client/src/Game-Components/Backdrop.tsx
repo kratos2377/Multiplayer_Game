@@ -1,6 +1,6 @@
 import p5Types from "p5";
 
-function backdrop(p5: p5Types) {
+function backdrop(p5: p5Types, score1: number, score2: number) {
   let textOffsetX = 50;
   let textOffsetY = 10;
 
@@ -25,10 +25,10 @@ function backdrop(p5: p5Types) {
   p5.fill(80);
 
   p5.textAlign(p5.RIGHT, p5.TOP);
-  p5.text(0, width / 2 - textOffsetX, textOffsetY);
+  p5.text(score1, width / 2 - textOffsetX, textOffsetY);
 
   p5.textAlign(p5.LEFT);
-  p5.text(0, width / 2 + textOffsetX, textOffsetY);
+  p5.text(score2, width / 2 + textOffsetX, textOffsetY);
 }
 
 export default backdrop;
