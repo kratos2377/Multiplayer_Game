@@ -15,10 +15,9 @@ interface ExtSocket extends Socket {
   username: string;
   x: number;
   y: number;
-  z: number;
   roomCode: string;
-  healthPoints: number;
-  attackPoints: number;
+  speed: number;
+  score: number;
 }
 
 const main = async () => {
@@ -96,23 +95,21 @@ const main = async () => {
   });
   // console.log("THIS IS IO");
   // console.log(io);
+  let width = 950;
+  let height = 500;
   io.on("connection", function (socket: ExtSocket) {
     // console.log(socket);
     socket.emit("setId", { id: socket.id });
     socket.on("init", function (data) {
-      socket.x = 0;
-      socket.y = 0;
-      socket.z = 0;
+      socket.score = 0;
+      socket.x = data.playerValue == 1 ? 20 : width - 30;
+      socket.y = height / 2 - 50;
       socket.username = data.username;
       socket.roomCode = data.roomCode;
     });
 
     socket.on("joinRoom", function (data) {
       socket.join(data.roomId);
-      // console.log("Room Id to be joined");
-      // console.log(data.roomId);
-      // console.log(socket.id);
-      // console.log(socket.username);
       socket.broadcast.to(data.roomId).emit("someone-joined", {
         id: socket.id,
         username: socket.username,
@@ -136,9 +133,48 @@ const main = async () => {
     });
 
     socket.on("gameStart", function (data) {
-      socket.healthPoints = data.healthPoints;
-      socket.attackPoints = data.attackPoints;
+      socket.score = 0;
+
+      let value = Math.floor(Math.random() * (2 - 1 + 1) + 1);
+
+      socket.broadcast.to(data.roomId).emit("ball-pos", {
+        direction: value,
+      });
     });
+
+    // socket.on("stop-game" , {
+
+    // })
+
+    socket.on("update-score", function (data) {
+      socket.score = data.score;
+    });
+
+    socket.on("update-position", function (data) {
+      socket.x = data.x;
+      socket.y = data.y;
+
+      socket.broadcast.to(data.roomId).emit("player-position", {
+        value: data.playerValue,
+        x: data.x,
+        y: data.y,
+      });
+    });
+
+    // Ball Functions will control the flow of game
+
+    socket.on("update-ball-pos", function (data) {
+      socket.broadcast.to(data.roomId).emit("ball-position", {
+        ballx: 0,
+        bally: 0,
+      });
+    });
+
+    // socket.on("ball-hit", function (data) {});
+
+    // socket.on("out-of-bound", function (data) {});
+
+    // socket.emit("ball-position");
 
     // socket.on("update" , function(data) {
 

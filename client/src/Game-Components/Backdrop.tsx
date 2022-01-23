@@ -3,9 +3,8 @@ import p5Types from "p5";
 function backdrop(p5: p5Types, score1: number, score2: number) {
   let textOffsetX = 50;
   let textOffsetY = 10;
-
-  let width = window.innerWidth * 0.8;
-  let height = window.innerHeight * 0.9;
+  let width = 950;
+  let height = 500;
 
   p5.stroke(80);
   p5.strokeWeight(8);

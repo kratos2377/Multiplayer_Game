@@ -9,7 +9,7 @@ export class Room extends BaseEntity {
   id!: string;
 
   @Field()
-  @Column("int", { default: 5 })
+  @Column("int", { default: 2 })
   users!: number;
 
   @Field()

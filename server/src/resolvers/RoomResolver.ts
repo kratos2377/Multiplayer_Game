@@ -81,7 +81,7 @@ export class RoomResolver {
 
     let newRoom = await Room.create({
       id: ans,
-      users: 4,
+      users: 1,
       adminSocketId: adminId,
     }).save();
 

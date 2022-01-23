@@ -19,9 +19,9 @@ class Paddle {
     }
   }
 
-  show(p5) {
+  show(p5, color) {
     p5.noStroke();
-    p5.fill(255);
+    p5.fill(color.r, color.g, color.b);
     p5.rect(this.pos.x, this.pos.y, this.w, this.h);
   }
 }
