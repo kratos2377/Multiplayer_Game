@@ -97,6 +97,7 @@ const main = async () => {
   // console.log(io);
   let width = 950;
   let height = 500;
+  let h = 10;
   io.on("connection", function (socket: ExtSocket) {
     // console.log(socket);
     socket.emit("setId", { id: socket.id });
@@ -154,6 +155,16 @@ const main = async () => {
       socket.x = data.x;
       socket.y = data.y;
 
+      // data.y += data.amt;
+
+      if (data.y < 10) {
+        data.y = 10;
+      }
+
+      if (data.y > height - 10 - h) {
+        data.y = height - 10 - h;
+      }
+
       socket.broadcast.to(data.roomId).emit("player-position", {
         value: data.playerValue,
         x: data.x,
@@ -164,9 +175,11 @@ const main = async () => {
     // Ball Functions will control the flow of game
 
     socket.on("update-ball-pos", function (data) {
+      let value = Math.floor(Math.random() * (2 - 1 + 1) + 1);
       socket.broadcast.to(data.roomId).emit("ball-position", {
         ballx: 0,
         bally: 0,
+        direction: value,
       });
     });
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Button, Col, Modal, Form, Alert } from "react-bootstrap";
-import Header from "../components/Header";
+import Header from "../extra-components/Header";
 import {
   useCreateRoomMutation,
   useJoinRoomMutation,
@@ -12,7 +12,7 @@ import {
   ROOM_DOES_NOT_EXIST,
   ROOM_IS_FULL,
   USERNAME_EXIST_IN_ROOM,
-} from "../constants";
+} from "../constants-socket";
 
 interface HomeScreenProps extends RouteComponentProps {}
 

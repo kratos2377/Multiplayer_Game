@@ -1,6 +1,7 @@
 import React from "react";
 import { Container } from "react-bootstrap";
 import { BrowserRouter as Router, Route } from "react-router-dom";
+import { ChessGameScreen } from "./pages/ChessGameScreen";
 import { GameInfoScreen } from "./pages/GameInfoScreen";
 import { GameScreen } from "./pages/GameScreen";
 import { HomeScreen } from "./pages/HomeScreen";
@@ -10,7 +11,7 @@ function App() {
     <Router>
       <main className="py-3">
         <Container>
-          <Route path="/" component={GameScreen} exact />
+          <Route path="/" component={ChessGameScreen} exact />
           {/* <Route path="/" element={<HomeScreen />} /> */}
           {/* <Route path="/" component={HomeScreen} exact />
           <Route path="/game/:roomId" component={GameInfoScreen} exact /> */}
