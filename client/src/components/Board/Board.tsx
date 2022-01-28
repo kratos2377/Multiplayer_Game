@@ -8,12 +8,13 @@ import { getValidMoves } from "../../utils";
 import { useWindowSize } from "../../hooks/useWindowSize";
 import { isCheck } from "../../utils/isCheck";
 import { socket } from "../../services/socket.js";
+import { setTokenSourceMapRange } from "typescript";
 
-function Board(props: any) {
+const Board = (props: any) => {
   const size = useWindowSize();
   const maximumSideSize = Math.min(size.width ?? 0, size.height ?? 0) * 0.8;
-  let roomId = "sadasdasd";
-  let playerVal = "1";
+  let roomId = props.roomId;
+  let playerVal = props.playerVal;
 
   const [pieceElementSelected, setPieceElementSelected] =
     useState<JSX.Element | null>(null);
@@ -26,6 +27,8 @@ function Board(props: any) {
   const tiles = [];
 
   const handleClick = (position: string, piece: any) => {
+    if (props.currentTurn !== props.playerVal) return;
+
     if (pieceElementSelected) {
       const pieceSelected = picesPositions.find(
         (piece) => piece.position === pieceSelectedPosition
@@ -56,6 +59,11 @@ function Board(props: any) {
             player: playerVal,
             nextTurn: playerVal === "1" ? "2" : "1",
           });
+          if (props.currentTurn === "1") {
+            props.setCurrentTurn("2");
+          } else if (props.currentTurn === "2") {
+            props.setCurrentTurn("1");
+          }
           props.setTurn(!props.isBlackTurn);
           setLastMovePosition(position);
         }
@@ -72,8 +80,7 @@ function Board(props: any) {
           }
           return piece;
         });
-        console.log("New Piece Info");
-        console.log(newPiecesPosition);
+
         setPiecesPositions(newPiecesPosition);
       }
     }
@@ -81,7 +88,40 @@ function Board(props: any) {
 
   useEffect(() => {
     socket.on("userMove", (data) => {
-      console.log(data);
+      // console.log("User Move Data");
+      // console.log(data);
+      const newPiecesPosition = picesPositions.filter(
+        (piece) =>
+          piece.position !== data.oldPos && piece.position !== data.newPos
+      );
+      const oldPiece = picesPositions.find(
+        (piece) => piece.position === data.oldPos
+      );
+      // console.log("Old Piece");
+      // console.log(oldPiece);
+
+      newPiecesPosition.push({
+        position: data.newPos,
+        piece: oldPiece!.piece,
+        pieceController: oldPiece!.pieceController,
+      });
+
+      setPiecesPositions(newPiecesPosition);
+      props.setCurrentTurn(data.nextTurn);
+
+      // if (data.nextTurn === "2") {
+      //   props.setTurn(true);
+      // } else if (data.nextTurn === "1") {
+      //   props.setTurn(false);
+      // }
+
+      if (data.nextTurn === "1") {
+        props.setCurrentTurn("1");
+      } else if (data.nextTurn === "2") {
+        props.setCurrentTurn("2");
+      }
+
+      props.setTurn(!props.isBlackTurn);
     });
 
     return () => {
@@ -135,6 +175,6 @@ function Board(props: any) {
       {tiles}
     </div>
   );
-}
+};
 
 export default Board;

@@ -25,11 +25,11 @@ const main = async () => {
     logging: true,
     synchronize: true,
     entities: [User, Lobby, Room],
-    extra: {
-      ssl: {
-        rejectUnauthorized: false,
-      },
-    },
+    // extra: {
+    //   ssl: {
+    //     rejectUnauthorized: false,
+    //   },
+    // },
   });
 
   const app = Express();
@@ -137,6 +137,8 @@ const main = async () => {
     // socket.on("update" , function(data) {
 
     socket.on("move", (data) => {
+      // console.log("Move data");
+      // console.log(data);
       socket.broadcast.to(data.roomId).emit("userMove", data);
     });
   });

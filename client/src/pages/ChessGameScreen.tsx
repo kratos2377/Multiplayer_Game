@@ -18,7 +18,11 @@ export const ChessGameScreen: React.FC<ChessGameScreenProps> = ({}) => {
   return (
     <>
       <div className="chessBoard">
-        <App />
+        <App
+          playerVal={location.state.playerVal}
+          username={location.state.username}
+          roomId={roomId}
+        />
       </div>
     </>
   );
