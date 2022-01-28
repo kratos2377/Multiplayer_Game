@@ -1,21 +1,13 @@
 import React, { useState, useEffect } from "react";
-import {
-  Button,
-  Container,
-  Form,
-  Modal,
-  Row,
-  Spinner,
-  Table,
-} from "react-bootstrap";
+import { Button, Container, Modal, Row, Spinner, Table } from "react-bootstrap";
 import { RouteComponentProps, useLocation, useParams } from "react-router-dom";
 import {
   useGetLobbyDetailsQuery,
   useLeaveRoomMutation,
-  useNumberOfUsersInRoomQuery,
   useRoomDetailsQuery,
 } from "../generated/graphql";
 import { socket } from "../services/socket.js";
+import "./bootstrap.min.css";
 interface GameInfoScreenRoomIdProps {
   roomId: string;
 }
@@ -44,6 +36,7 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
       username: string;
     }>
   >([]);
+
   //{ id: location.state.socketId, username: location.state.username }
   const { data, error, loading } = useRoomDetailsQuery({
     variables: {
@@ -71,6 +64,11 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
     },
   });
 
+  let playerVal: string =
+    data && data?.getRoomDetails?.adminSocketId === location.state.socketId
+      ? "1"
+      : "2";
+
   const renderTable = async (
     users: Array<{ id: string; username: string }>
   ) => {
@@ -96,15 +94,13 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
   };
 
   socket.emit("init", {
-    x: 0,
-    y: 0,
-    z: 0,
     username: location.state.username,
     roomCode: roomId,
   });
 
   useEffect(() => {
     if (!lobbyLoading && lobbyData) {
+      console.log("Joining successful");
       socket.emit("joinRoom", {
         roomId: roomId,
         users: lobbyData?.getLobbyDetails?.length,
@@ -137,6 +133,15 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
       }
     }
   }, [loading]);
+
+  useEffect(() => {
+    socket.on("gameStarted", function (data) {
+      history.push({
+        pathname: "/game/" + roomId,
+        state: { username: location.state.username, playerVal: playerVal },
+      });
+    });
+  });
 
   //MOst Probably problem is here
 
@@ -174,7 +179,21 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
     }, 500);
   });
 
-  const startTheGame = () => {};
+  const startTheGame = () => {
+    if (totalUsers < 2) {
+      return;
+    }
+    socket.emit("startGame", {
+      roomId: roomId,
+    });
+
+    socket.off("startGame");
+
+    history.push({
+      pathname: "/game/" + roomId,
+      state: { username: location.state.username, playerVal: playerVal },
+    });
+  };
 
   const sendToHomePage = () => {
     setShowModal(false);
@@ -255,8 +274,8 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
 
             <Container>
               <Row>
-                {data?.getRoomDetails?.adminSocketId?.toString() ===
-                socket.id.toString() ? (
+                {data?.getRoomDetails?.adminSocketId ===
+                location.state.socketId ? (
                   <Button onClick={startTheGame}>Start Game</Button>
                 ) : (
                   <div></div>

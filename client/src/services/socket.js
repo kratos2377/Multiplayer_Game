@@ -1,7 +1,7 @@
 import io from "socket.io-client";
 
-export const socket = io("https://glacial-inlet-65738.herokuapp.com", {
-  transports: ["websocket", "polling", "flashsocket"],
+export const socket = io("http://localhost:5000", {
+  transports: ["websocket", "polling"],
   reconnection: true,
   secure: true,
 });

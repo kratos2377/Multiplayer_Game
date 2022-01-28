@@ -13,6 +13,7 @@ import {
   ROOM_IS_FULL,
   USERNAME_EXIST_IN_ROOM,
 } from "../constants-socket";
+import "./bootstrap.min.css";
 
 interface HomeScreenProps extends RouteComponentProps {}
 
@@ -59,7 +60,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ history }) => {
     var code1 = response?.data?.createRoom?.response?.code?.toString();
 
     history.push({
-      pathname: "/game/" + code1,
+      pathname: "/gameInfo/" + code1,
       state: { username: username, socketId: socketId },
     });
   };
@@ -123,7 +124,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ history }) => {
     setError(false);
 
     history.push({
-      pathname: "/game/" + code,
+      pathname: "/gameInfo/" + code,
       state: { username: username, socketId: socketId },
     });
   };

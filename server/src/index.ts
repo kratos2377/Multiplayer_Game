@@ -13,11 +13,7 @@ import { Socket } from "socket.io";
 
 interface ExtSocket extends Socket {
   username: string;
-  x: number;
-  y: number;
   roomCode: string;
-  speed: number;
-  score: number;
 }
 
 const main = async () => {
@@ -88,6 +84,7 @@ const main = async () => {
   const io = require("socket.io")(httpServer, {
     cors: {
       origin: [
+        "http://localhost:3000",
         "https://localhost:3000",
         "https://keen-leavitt-c423c3.netlify.app/",
       ],
@@ -95,22 +92,22 @@ const main = async () => {
   });
   // console.log("THIS IS IO");
   // console.log(io);
-  let width = 950;
-  let height = 500;
-  let h = 10;
+  // let width = 950;
+  // let height = 500;
+  // let h = 10;
   io.on("connection", function (socket: ExtSocket) {
-    // console.log(socket);
     socket.emit("setId", { id: socket.id });
     socket.on("init", function (data) {
-      socket.score = 0;
-      socket.x = data.playerValue == 1 ? 20 : width - 30;
-      socket.y = height / 2 - 50;
       socket.username = data.username;
       socket.roomCode = data.roomCode;
     });
 
     socket.on("joinRoom", function (data) {
       socket.join(data.roomId);
+      // console.log("Room Id to be joined");
+      // console.log(data.roomId);
+      // console.log(socket.id);
+      // console.log(socket.username);
       socket.broadcast.to(data.roomId).emit("someone-joined", {
         id: socket.id,
         username: socket.username,
@@ -133,65 +130,15 @@ const main = async () => {
       });
     });
 
-    socket.on("gameStart", function (data) {
-      socket.score = 0;
-
-      let value = Math.floor(Math.random() * (2 - 1 + 1) + 1);
-
-      socket.broadcast.to(data.roomId).emit("ball-pos", {
-        direction: value,
-      });
+    socket.on("startGame", (data) => {
+      socket.broadcast.to(data.roomId).emit("gameStarted");
     });
-
-    // socket.on("stop-game" , {
-
-    // })
-
-    socket.on("update-score", function (data) {
-      socket.score = data.score;
-    });
-
-    socket.on("update-position", function (data) {
-      socket.x = data.x;
-      socket.y = data.y;
-
-      // data.y += data.amt;
-
-      if (data.y < 10) {
-        data.y = 10;
-      }
-
-      if (data.y > height - 10 - h) {
-        data.y = height - 10 - h;
-      }
-
-      socket.broadcast.to(data.roomId).emit("player-position", {
-        value: data.playerValue,
-        x: data.x,
-        y: data.y,
-      });
-    });
-
-    // Ball Functions will control the flow of game
-
-    socket.on("update-ball-pos", function (data) {
-      let value = Math.floor(Math.random() * (2 - 1 + 1) + 1);
-      socket.broadcast.to(data.roomId).emit("ball-position", {
-        ballx: 0,
-        bally: 0,
-        direction: value,
-      });
-    });
-
-    // socket.on("ball-hit", function (data) {});
-
-    // socket.on("out-of-bound", function (data) {});
-
-    // socket.emit("ball-position");
 
     // socket.on("update" , function(data) {
 
-    // });
+    socket.on("move", (data) => {
+      socket.broadcast.to(data.roomId).emit("userMove", data);
+    });
   });
 };
 

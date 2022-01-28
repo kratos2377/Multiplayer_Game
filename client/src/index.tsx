@@ -6,7 +6,7 @@ import "./index.css";
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 
 const client = new ApolloClient({
-  uri: "https://glacial-inlet-65738.herokuapp.com/graphql",
+  uri: "http://localhost:5000/graphql",
   credentials: "include",
   cache: new InMemoryCache(),
 });
