@@ -100,17 +100,14 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
 
   useEffect(() => {
     if (!lobbyLoading && lobbyData) {
-      console.log("Joining successful");
-      socket.emit("joinRoom", {
-        roomId: roomId,
-        users: lobbyData?.getLobbyDetails?.length,
-      });
-
+      // console.log("Joining successful");
+      //console.log("Value Starting");
       setTotalUsers(lobbyData?.getLobbyDetails?.length);
       let newAllusers: Array<{
         id: string;
         username: string;
       }> = [];
+      // console.log(lobbyData);
       for (var i = 0; i < lobbyData?.getLobbyDetails?.length; i++) {
         newAllusers.push({
           id: lobbyData?.getLobbyDetails[i]?.userId,
@@ -119,9 +116,16 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
       }
 
       setAllUsers(newAllusers);
+
       setTimeout(() => {
+        console.log(allUsers);
         renderTable(newAllusers);
-      }, 500);
+      }, 2000);
+
+      socket.emit("joinRoom", {
+        roomId: roomId,
+        users: lobbyData?.getLobbyDetails?.length,
+      });
     }
   }, [lobbyLoading, lobbyData, location.state]);
 
@@ -138,7 +142,11 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
     socket.on("gameStarted", function (data) {
       history.push({
         pathname: "/game/" + roomId,
-        state: { username: location.state.username, playerVal: playerVal },
+        state: {
+          username: location.state.username,
+          playerVal: playerVal,
+          users: allUsers,
+        },
       });
     });
   });
@@ -159,7 +167,7 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
 
     setTimeout(() => {
       renderTable(newAllusers);
-    }, 500);
+    }, 2000);
   });
 
   socket.on("someone-leaved", async function (data) {
@@ -191,7 +199,11 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
 
     history.push({
       pathname: "/game/" + roomId,
-      state: { username: location.state.username, playerVal: playerVal },
+      state: {
+        username: location.state.username,
+        playerVal: playerVal,
+        users: allUsers,
+      },
     });
   };
 

@@ -1,3 +1,4 @@
+import { userInfo } from "os";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 
 import "./TurnDisplay.css";
@@ -14,8 +15,8 @@ function TurnDisplay(props: any) {
     >
       <span>
         {props.playerVal !== props.currentTurn
-          ? "Opponent's Turn"
-          : "Your Turn"}
+          ? props.otherUsername + "'s  Turn"
+          : props.username + "'s  Turn"}
       </span>
     </CSSTransition>
   );

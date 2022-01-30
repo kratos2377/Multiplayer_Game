@@ -102,6 +102,10 @@ const main = async () => {
       socket.roomCode = data.roomCode;
     });
 
+    // socket.on("createRoom" , (data) => {
+    // numClients[data.roomId]
+    // })
+
     socket.on("joinRoom", function (data) {
       socket.join(data.roomId);
       // console.log("Room Id to be joined");
