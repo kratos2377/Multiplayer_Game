@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import Peer from "simple-peer";
 import { socket } from "../services/socket";
 import { Button } from "react-bootstrap";
+import "./bootstrap.min.css";
+import "./video.css";
 
 export const VideoCall = (props) => {
   const [callAccepted, setCallAccepted] = useState(false);
@@ -42,7 +44,7 @@ export const VideoCall = (props) => {
         userToCall: username,
         signalData: data,
         from: props.username,
-        gameId: props.gameId,
+        roomId: props.roomId,
       });
     });
 
@@ -70,7 +72,7 @@ export const VideoCall = (props) => {
       socket.emit("acceptCall", {
         signal: data,
         to: caller,
-        gameId: props.gameId,
+        roomId: props.roomId,
       });
     });
 
@@ -120,21 +122,21 @@ export const VideoCall = (props) => {
   }
 
   return (
-    <div>
+    <div className="videoScreen">
       <div>
         {UserVideo}
         {PartnerVideo}
       </div>
       <div>
-        {props.allUsers.map((name) => {
-          if (name !== props.username && !callerSignal) {
+        {props.allUsers.map((user) => {
+          if (user.username !== props.username && !callerSignal) {
             return (
               <Button
                 variant="contained"
                 color="primary"
-                onClick={() => callPeer(name)}
+                onClick={() => callPeer(user.username)}
               >
-                Call {name}
+                Call {user.username}
               </Button>
             );
           }

@@ -145,6 +145,25 @@ const main = async () => {
       // console.log(data);
       socket.broadcast.to(data.roomId).emit("userMove", data);
     });
+
+    //Message Events
+    socket.on("sendMessage", (message, roomId, username, callback) => {
+      socket.broadcast
+        .to(roomId)
+        .emit("message", { text: message, user: username });
+      callback();
+    });
+
+    //Video Chat Socket Events
+    socket.on("callUser", (data) => {
+      socket.broadcast
+        .to(data.roomId)
+        .emit("hello", { signal: data.signalData, from: data.from });
+    });
+
+    socket.on("acceptCall", (data) => {
+      socket.broadcast.to(data.roomId).emit("callAccepted", data.signal);
+    });
   });
 };
 

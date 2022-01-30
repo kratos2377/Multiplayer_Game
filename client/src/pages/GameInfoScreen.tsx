@@ -69,6 +69,16 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
       ? "1"
       : "2";
 
+  // const setTheUsersTable = (
+  //   newAllUsers: Array<{
+  //     id: string;
+  //     username: string;
+  //   }>
+  // ) => {
+  //   console.log(newAllUsers);
+  //   setAllUsers(newAllUsers);
+  // };
+
   const renderTable = async (
     users: Array<{ id: string; username: string }>
   ) => {
@@ -98,7 +108,7 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
     roomCode: roomId,
   });
 
-  useEffect(() => {
+  const domHandler = () => {
     if (!lobbyLoading && lobbyData) {
       // console.log("Joining successful");
       //console.log("Value Starting");
@@ -109,25 +119,32 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
       }> = [];
       // console.log(lobbyData);
       for (var i = 0; i < lobbyData?.getLobbyDetails?.length; i++) {
+        console.log(lobbyData.getLobbyDetails[i]);
         newAllusers.push({
           id: lobbyData?.getLobbyDetails[i]?.userId,
           username: lobbyData?.getLobbyDetails[i]?.username,
         });
       }
 
-      setAllUsers(newAllusers);
+      console.log(newAllusers);
+
+      setAllUsers([...newAllusers]);
 
       setTimeout(() => {
         console.log(allUsers);
         renderTable(newAllusers);
-      }, 2000);
+      }, 500);
 
       socket.emit("joinRoom", {
         roomId: roomId,
         users: lobbyData?.getLobbyDetails?.length,
       });
     }
-  }, [lobbyLoading, lobbyData, location.state]);
+  };
+
+  useEffect(() => {
+    domHandler();
+  }, [lobbyLoading, lobbyData]);
 
   useEffect(() => {
     if (!loading) {
@@ -138,19 +155,6 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
     }
   }, [loading]);
 
-  useEffect(() => {
-    socket.on("gameStarted", function (data) {
-      history.push({
-        pathname: "/game/" + roomId,
-        state: {
-          username: location.state.username,
-          playerVal: playerVal,
-          users: allUsers,
-        },
-      });
-    });
-  });
-
   //MOst Probably problem is here
 
   socket.on("someone-joined", async function (data) {
@@ -159,6 +163,7 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
     if (totalUsers > 2) {
       setNewDisabled(false);
     }
+    console.log(allUsers);
     let newAllusers: Array<{
       id: string;
       username: string;
@@ -167,7 +172,7 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
 
     setTimeout(() => {
       renderTable(newAllusers);
-    }, 2000);
+    }, 500);
   });
 
   socket.on("someone-leaved", async function (data) {
@@ -242,10 +247,26 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
     );
   });
 
+  useEffect(() => {
+    socket.on("gameStarted", function (data) {
+      history.push({
+        pathname: "/game/" + roomId,
+        state: {
+          username: location.state.username,
+          playerVal: playerVal,
+          users: allUsers,
+        },
+      });
+    });
+
+    return () => {
+      socket.off("gameStarted");
+    };
+  });
   // useEffect(() => {
   //   renderTable();
   // }, []);
-
+  console.log(allUsers);
   return (
     <>
       {!loading && !lobbyLoading ? (
@@ -276,7 +297,7 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
             </span>
             <p></p>
           </div>
-          <h3>Players in Lobby: {totalUsers}/16</h3>
+          <h3>Players in Lobby: {totalUsers}/2</h3>
           <div className="col-xs-6">
             <Row className="flex" sm={3} md={2} lg={2}>
               <Table striped bordered size="sm">
