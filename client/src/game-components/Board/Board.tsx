@@ -33,8 +33,8 @@ const Board = (props: any) => {
       const pieceSelected = picesPositions.find(
         (piece) => piece.position === pieceSelectedPosition
       );
-      console.log("Piece Selected");
-      console.log(pieceSelected);
+      //    console.log("Piece Selected");
+      //  console.log(pieceSelected);
       if (pieceSelected) {
         pieceSelected.pieceController.selected = false;
         const newPiecesPosition = picesPositions.filter(
@@ -51,7 +51,7 @@ const Board = (props: any) => {
         });
         setPiecesPositions(newPiecesPosition);
         if (pieceSelectedPosition !== position) {
-          console.log("New Position");
+          // console.log("New Position");
           socket.emit("move", {
             newPos: position,
             oldPos: pieceSelectedPosition,
@@ -131,6 +131,10 @@ const Board = (props: any) => {
 
   useEffect(() => {
     setCheck(isCheck(picesPositions, isBlackTurn, lastMovePosition));
+
+    // if(props.isCheck){
+
+    // }
   });
 
   const validMoves = getValidMoves(

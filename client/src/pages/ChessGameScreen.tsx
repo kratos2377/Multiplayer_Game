@@ -1,7 +1,10 @@
-import React from "react";
-import { useParams, useLocation } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { socket } from "../services/socket";
+import { useParams, useLocation, RouteComponentProps } from "react-router-dom";
 import App from "../game-components/App";
 import { VideoCall } from "../Video-Screen/VideoCall";
+
+import { Button, Modal } from "react-bootstrap";
 import { Chat } from "../Chat-Screen/Chat";
 import "./board.css";
 
@@ -9,35 +12,74 @@ interface GameScreenRoomIdProps {
   roomId: string;
 }
 
-interface ChessGameScreenProps {}
+interface ChessGameScreenProps extends RouteComponentProps {}
 
-export const ChessGameScreen: React.FC<ChessGameScreenProps> = ({}) => {
+export const ChessGameScreen: React.FC<ChessGameScreenProps> = ({
+  history,
+}) => {
   const { roomId } = useParams<GameScreenRoomIdProps>();
   const location =
     useLocation<{ username: "value"; playerVal: "value"; users: "value" }>();
+  const [errorMessage, setErrorMessage] = useState("");
+  const [showModal, setShowModal] = useState(false);
 
-  console.log(location.state);
+  // console.log(location.state);
+
+  useEffect(() => {
+    socket.on("opponent-left", () => {
+      setErrorMessage("Opponent Left the Game. Head Back to Main Screen");
+      setShowModal(true);
+    });
+    return () => {
+      socket.off("opponent-left");
+    };
+  });
+
+  const sendToHomePage = () => {
+    setShowModal(false);
+    history.push("/");
+  };
 
   return (
-    <div className="game-screen">
-      <div className="chessBoard">
-        <App
-          playerVal={location.state.playerVal}
-          username={location.state.username}
-          roomId={roomId}
-          users={location.state.users}
-        />
+    <>
+      <Modal show={showModal}>
+        <Modal.Dialog>
+          <Modal.Header>
+            <Modal.Title>Error..!!</Modal.Title>
+          </Modal.Header>
+
+          <Modal.Body>
+            <p>{errorMessage}</p>
+          </Modal.Body>
+
+          <Modal.Footer>
+            <Button variant="primary" onClick={sendToHomePage}>
+              Go To Home Page
+            </Button>
+          </Modal.Footer>
+        </Modal.Dialog>
+      </Modal>
+
+      <div className="game-screen">
+        <div className="chessBoard">
+          <App
+            playerVal={location.state.playerVal}
+            username={location.state.username}
+            roomId={roomId}
+            users={location.state.users}
+          />
+        </div>
+        <div className="videoArea">
+          <VideoCall
+            roomId={roomId}
+            allUsers={location.state.users}
+            username={location.state.username}
+          />
+        </div>
+        <div>
+          <Chat username={location.state.username} roomId={roomId} />
+        </div>
       </div>
-      <div className="videoArea">
-        <VideoCall
-          roomId={roomId}
-          allUsers={location.state.users}
-          username={location.state.username}
-        />
-      </div>
-      <div>
-        <Chat username={location.state.username} roomId={roomId} />
-      </div>
-    </div>
+    </>
   );
 };

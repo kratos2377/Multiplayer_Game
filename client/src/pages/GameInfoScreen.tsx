@@ -36,6 +36,7 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
       username: string;
     }>
   >([]);
+  const [leavePageModal, setLeavePageModal] = useState(false);
 
   //{ id: location.state.socketId, username: location.state.username }
   const { data, error, loading } = useRoomDetailsQuery({
@@ -119,19 +120,19 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
       }> = [];
       // console.log(lobbyData);
       for (var i = 0; i < lobbyData?.getLobbyDetails?.length; i++) {
-        console.log(lobbyData.getLobbyDetails[i]);
+        //  console.log(lobbyData.getLobbyDetails[i]);
         newAllusers.push({
           id: lobbyData?.getLobbyDetails[i]?.userId,
           username: lobbyData?.getLobbyDetails[i]?.username,
         });
       }
 
-      console.log(newAllusers);
+      // console.log(newAllusers);
 
       setAllUsers([...newAllusers]);
 
       setTimeout(() => {
-        console.log(allUsers);
+        // console.log(allUsers);
         renderTable(newAllusers);
       }, 500);
 
@@ -163,7 +164,7 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
     if (totalUsers > 2) {
       setNewDisabled(false);
     }
-    console.log(allUsers);
+    //  console.log(allUsers);
     let newAllusers: Array<{
       id: string;
       username: string;
@@ -263,10 +264,21 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
       socket.off("gameStarted");
     };
   });
+
+  useEffect(() => {
+    socket.on("opponent-left", () => {
+      setErrorMessage("Opponent Left the Game. Head Back to Main Screen");
+      setShowModal(true);
+    });
+    return () => {
+      socket.off("opponent-left");
+    };
+  });
+
   // useEffect(() => {
   //   renderTable();
   // }, []);
-  console.log(allUsers);
+  // console.log(allUsers);
   return (
     <>
       {!loading && !lobbyLoading ? (

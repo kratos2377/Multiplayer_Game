@@ -164,6 +164,12 @@ const main = async () => {
     socket.on("acceptCall", (data) => {
       socket.broadcast.to(data.roomId).emit("callAccepted", data.signal);
     });
+
+    //Disconnect Event
+    socket.on("disconnect", () => {
+      // console.log("Disconnected user");
+      socket.broadcast.to(socket.roomCode).emit("opponent-left");
+    });
   });
 };
 
