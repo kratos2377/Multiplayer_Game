@@ -1,20 +1,25 @@
-import { Navbar, Container, Nav } from "react-bootstrap";
+import * as React from "react";
+import AppBar from "@mui/material/AppBar";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
 
 const Header = () => {
   return (
-    <header>
-      <Navbar bg="primary" variant="dark" expand="xl" collapseOnSelect>
-        <Container>
-          <Navbar.Brand>New Game</Navbar.Brand>
-          {/* <Nav className="me-auto">
-            <Nav.Link href="#home">Home</Nav.Link>
-            <Nav.Link href="#features">Features</Nav.Link>
-            <Nav.Link href="#pricing">Pricing</Nav.Link>
-          </Nav> */}
-        </Container>
-      </Navbar>
-    </header>
+    <AppBar style={{ background: "#000000" }} position="static">
+      <Container maxWidth="xl">
+        <Toolbar disableGutters>
+          <Typography
+            variant="h6"
+            noWrap
+            component="div"
+            sx={{ mr: 2, display: { xs: "none", md: "flex" } }}
+          >
+            Online Multiplayer Chess
+          </Typography>
+        </Toolbar>
+      </Container>
+    </AppBar>
   );
 };
-
 export default Header;
