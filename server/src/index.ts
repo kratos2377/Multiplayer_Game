@@ -25,11 +25,11 @@ const main = async () => {
     logging: true,
     synchronize: true,
     entities: [User, Lobby, Room],
-    // extra: {
-    //   ssl: {
-    //     rejectUnauthorized: false,
-    //   },
-    // },
+    extra: {
+      ssl: {
+        rejectUnauthorized: false,
+      },
+    },
   });
 
   const app = Express();
