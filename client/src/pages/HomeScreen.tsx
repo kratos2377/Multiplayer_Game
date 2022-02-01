@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Button, Col, Modal, Form, Alert } from "react-bootstrap";
+import React, { useState } from "react";
+import { Button, Col, Modal, Form, Alert, Spinner } from "react-bootstrap";
 import Header from "../extra-components/Header";
 import {
   useCreateRoomMutation,
@@ -23,7 +23,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ history }) => {
   const [socketId, setSocketId] = useState("");
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-
+  const [modalLoading, setModalLoading] = useState(false);
   const [openCreateRoomModal, setOpenCreateRoom] = useState(false);
   const [openJoinRoomModal, setOpenJoinRoom] = useState(false);
   const [createRoomMutation] = useCreateRoomMutation();
@@ -42,8 +42,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ history }) => {
   const createRoom = async () => {
     setOpenCreateRoom(false);
     setOpenJoinRoom(false);
+    setModalLoading(true);
 
     if (username.trim() === "" || username.length <= 4) {
+      setModalLoading(false);
       setErrorMessage("Username Length must be greater than 4");
       setError(true);
       return;
@@ -56,7 +58,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ history }) => {
     const response = await createRoomMutation({
       variables: values,
     });
-
+    setModalLoading(false);
     var code1 = response?.data?.createRoom?.response?.code?.toString();
 
     history.push({
@@ -69,14 +71,17 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ history }) => {
     setOpenCreateRoom(false);
     setOpenJoinRoom(false);
     setError(false);
+    setModalLoading(false);
 
     if (username.trim() === "" || username.length <= 4) {
+      setModalLoading(false);
       setErrorMessage("Username Length must be greater than 4");
       setError(true);
       return;
     }
 
     if (code.trim() === "" || code.length < 4) {
+      setModalLoading(false);
       setErrorMessage("Code Tera baap enter krega. HA bol na MC!");
       setError(true);
       return;
@@ -95,24 +100,28 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ history }) => {
       var errorDetected = response?.data?.joinRoom?.response?.error?.toString();
 
       if (errorDetected === ROOM_DOES_NOT_EXIST) {
+        setModalLoading(false);
         setErrorMessage("Room Doesn't Exist. Check it Again");
         setError(true);
         return;
       }
 
       if (errorDetected === ROOM_IS_FULL) {
+        setModalLoading(false);
         setErrorMessage("Room is Full. Can't Enter");
         setError(true);
         return;
       }
 
       if (errorDetected === GAME_IN_PROGRESS) {
+        setModalLoading(false);
         setErrorMessage("Game in Progress. Can't Enter now");
         setError(true);
         return;
       }
 
       if (errorDetected === USERNAME_EXIST_IN_ROOM) {
+        setModalLoading(false);
         setErrorMessage(
           "Someone is already using this username. Try a different one"
         );
@@ -120,7 +129,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ history }) => {
         return;
       }
     }
-
+    setModalLoading(false);
     setError(false);
 
     history.push({
@@ -149,6 +158,12 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ history }) => {
       ) : (
         <div></div>
       )}
+
+      <Modal show={modalLoading}>
+        <Modal.Body>
+          <Spinner animation="border" variant="dark" />
+        </Modal.Body>
+      </Modal>
 
       <Modal show={openCreateRoomModal}>
         <Modal.Dialog>
