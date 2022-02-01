@@ -18,7 +18,7 @@ interface ExtSocket extends Socket {
 
 const main = async () => {
   dotenv.config();
-
+  // console.log(process.env.DATABASE_URL);
   await createConnection({
     type: "postgres",
     url: process.env.DATABASE_URL,

@@ -1,7 +1,10 @@
 import io from "socket.io-client";
 
-export const socket = io("http://localhost:5000", {
-  transports: ["websocket", "polling"],
-  reconnection: true,
-  secure: true,
-});
+export const socket = io(
+  "https://multiplayer-chess-online-game.herokuapp.com",
+  {
+    transports: ["websocket", "polling"],
+    reconnection: true,
+    secure: true,
+  }
+);

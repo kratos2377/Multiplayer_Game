@@ -212,6 +212,15 @@ export type JoinRoomMutation = {
   };
 };
 
+export type DestroyRoomAndLobbyMutationVariables = Exact<{
+  roomCode: Scalars["String"];
+}>;
+
+export type DestroyRoomAndLobbyMutation = {
+  __typename?: "Mutation";
+  destroyRoomAndLobby: boolean;
+};
+
 export type LeaveRoomMutationVariables = Exact<{
   id: Scalars["String"];
   roomCode: Scalars["String"];
@@ -406,6 +415,54 @@ export type JoinRoomMutationResult = Apollo.MutationResult<JoinRoomMutation>;
 export type JoinRoomMutationOptions = Apollo.BaseMutationOptions<
   JoinRoomMutation,
   JoinRoomMutationVariables
+>;
+export const DestroyRoomAndLobbyDocument = gql`
+  mutation DestroyRoomAndLobby($roomCode: String!) {
+    destroyRoomAndLobby(roomCode: $roomCode)
+  }
+`;
+export type DestroyRoomAndLobbyMutationFn = Apollo.MutationFunction<
+  DestroyRoomAndLobbyMutation,
+  DestroyRoomAndLobbyMutationVariables
+>;
+
+/**
+ * __useDestroyRoomAndLobbyMutation__
+ *
+ * To run a mutation, you first call `useDestroyRoomAndLobbyMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDestroyRoomAndLobbyMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [destroyRoomAndLobbyMutation, { data, loading, error }] = useDestroyRoomAndLobbyMutation({
+ *   variables: {
+ *      roomCode: // value for 'roomCode'
+ *   },
+ * });
+ */
+export function useDestroyRoomAndLobbyMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    DestroyRoomAndLobbyMutation,
+    DestroyRoomAndLobbyMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    DestroyRoomAndLobbyMutation,
+    DestroyRoomAndLobbyMutationVariables
+  >(DestroyRoomAndLobbyDocument, options);
+}
+export type DestroyRoomAndLobbyMutationHookResult = ReturnType<
+  typeof useDestroyRoomAndLobbyMutation
+>;
+export type DestroyRoomAndLobbyMutationResult =
+  Apollo.MutationResult<DestroyRoomAndLobbyMutation>;
+export type DestroyRoomAndLobbyMutationOptions = Apollo.BaseMutationOptions<
+  DestroyRoomAndLobbyMutation,
+  DestroyRoomAndLobbyMutationVariables
 >;
 export const LeaveRoomDocument = gql`
   mutation LeaveRoom($id: String!, $roomCode: String!) {

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button, Container, Modal, Row, Spinner, Table } from "react-bootstrap";
 import { RouteComponentProps, useLocation, useParams } from "react-router-dom";
 import {
+  useDestroyRoomAndLobbyMutation,
   useGetLobbyDetailsQuery,
   useLeaveRoomMutation,
   useRoomDetailsQuery,
@@ -36,7 +37,8 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
       username: string;
     }>
   >([]);
-  const [leavePageModal, setLeavePageModal] = useState(false);
+  // const [leavePageModal, setLeavePageModal] = useState(false);
+  const [destroyRoomAndLobby] = useDestroyRoomAndLobbyMutation();
 
   //{ id: location.state.socketId, username: location.state.username }
   const { data, error, loading } = useRoomDetailsQuery({
@@ -215,6 +217,11 @@ export const GameInfoScreen: React.FC<GameInfoScreenRoomProps> = ({
 
   const sendToHomePage = () => {
     setShowModal(false);
+
+    const values = {
+      roomCode: roomId,
+    };
+    destroyRoomAndLobby({ variables: values });
     history.push("/");
   };
 

@@ -6,7 +6,7 @@ import "./index.css";
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 
 const client = new ApolloClient({
-  uri: "http://localhost:5000/graphql",
+  uri: "https://multiplayer-chess-online-game.herokuapp.com/graphql",
   credentials: "include",
   cache: new InMemoryCache(),
 });

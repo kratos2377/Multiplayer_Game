@@ -7,6 +7,7 @@ import { VideoCall } from "../Video-Screen/VideoCall";
 import { Button, Modal } from "react-bootstrap";
 import { Chat } from "../Chat-Screen/Chat";
 import "./board.css";
+import { useDestroyRoomAndLobbyMutation } from "../generated/graphql";
 
 interface GameScreenRoomIdProps {
   roomId: string;
@@ -24,10 +25,11 @@ export const ChessGameScreen: React.FC<ChessGameScreenProps> = ({
   const [showModal, setShowModal] = useState(false);
 
   // console.log(location.state);
-
+  const [destroyRoomAndLobby] = useDestroyRoomAndLobbyMutation();
   useEffect(() => {
     socket.on("opponent-left", () => {
       setErrorMessage("Opponent Left the Game. Head Back to Main Screen");
+
       setShowModal(true);
     });
     return () => {
@@ -37,6 +39,10 @@ export const ChessGameScreen: React.FC<ChessGameScreenProps> = ({
 
   const sendToHomePage = () => {
     setShowModal(false);
+    const values = {
+      roomCode: roomId,
+    };
+    destroyRoomAndLobby({ variables: values });
     history.push("/");
   };
 
