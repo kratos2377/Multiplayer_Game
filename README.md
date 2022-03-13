@@ -16,7 +16,7 @@
 
 
 ## Some Screenshots:-
-![screenshot](https://github.com/kratos2377/Multiplayer_Game/blob/main/uploads/2.png)
+![screenshot](https://github.com/kratos2377/Multiplayer_Game/blob/main/uploads/2.jpeg)
 
 
 
@@ -34,7 +34,7 @@ yarn install
 ```
 npm install
 ```
-
+- cd back to main directory.
 - cd into server directory.
 
 ```
